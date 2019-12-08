@@ -2,15 +2,13 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
-tabs 4
-
+# alias
 alias "gis"="git status"
 alias "gia"="git add"
 alias "gic"="git commit -m"
 alias "gip"="git push"
-alias "lcpp"="libcreator"
-alias "zz2"="cd ~/Documents/EtudeSup/Isima/ZZ2"
-alias "a-studio"="~/android-studio/bin/studio.sh"
+alias "zz2"="cd ~/Etudes/ZZ2"
+alias "a-studio"="~/Bin/android-studio/bin/studio.sh"
 
 # If not running interactively, don't do anything
 case $- in
@@ -28,8 +26,6 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
-
-export PATH=.:$PATH
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -68,8 +64,45 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+
+# prompt colors
+r=$(tput sgr0)
+white=$r$(tput setaf 7)
+white_dim=$r$(tput dim 7)
+green=$r$(tput bold)$(tput setaf 2)
+blue=$r$(tput bold)$(tput setaf 4)
+
+# functions for prompt display
+HOST_NAME=$(hostname)
+function hn_ps1
+{
+	if [ $(hostname) == $HOST_NAME ]; then
+	echo ""
+	else
+	echo "$green$(whoami)@$(hostname)$white:"
+	fi
+}
+
+function bn_wd
+{
+	if [ $(whoami) == $(basename $(pwd)) ]; then
+	echo "$blue~"
+	else
+	echo "$blue$(basename $(pwd))"
+	fi
+}
+
+function get_time
+{
+	if [ $(hostname) == $HOST_NAME ]; then
+	echo "$green[$(date +'%T')]"
+	else
+	echo "$white_dim[$(date +'%T')]"
+	fi
+}
+
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[00;02m\][\t]\[\033[00;00m\]\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}$(get_time)$(hn_ps1)$(bn_wd)\[\033[00m\]\$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -88,7 +121,7 @@ esac
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
     alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
+    #alias dir='dir --color=auto'
     #alias vdir='vdir --color=auto'
 
     alias grep='grep --color=auto'
@@ -127,3 +160,5 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+if [ $TILIX_ID ] || [ $VTE_VERSION ] ; then source /etc/profile.d/vte.sh; fi # Ubuntu Budgie END
+
