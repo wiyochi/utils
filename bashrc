@@ -68,6 +68,7 @@ fi
 # prompt colors
 r=$(tput sgr0)
 white=$r$(tput setaf 7)
+red=$r$(tput setaf 1)
 white_dim=$r$(tput dim 7)
 green=$r$(tput bold)$(tput setaf 2)
 blue=$r$(tput bold)$(tput setaf 4)
@@ -77,32 +78,39 @@ HOST_NAME=$(hostname)
 function hn_ps1
 {
 	if [ $(hostname) == $HOST_NAME ]; then
-	echo ""
+	echo -e ""
 	else
-	echo "$green$(whoami)@$(hostname)$white:"
+	echo -e "\001$green\002$(whoami)@$(hostname)\001$white\002:"
 	fi
 }
 
 function bn_wd
 {
 	if [ $(whoami) == $(basename $(pwd)) ]; then
-	echo "$blue~"
+	echo -e "\001$blue\002~"
 	else
-	echo "$blue$(basename $(pwd))"
+	echo -e "\001$blue\002$(basename $(pwd))"
 	fi
 }
 
 function get_time
 {
 	if [ $(hostname) == $HOST_NAME ]; then
-	echo "$green[$(date +'%T')]"
+	echo -e "\001$green\002[$(date +'%T')]"
 	else
-	echo "$white_dim[$(date +'%T')]"
+	echo -e "\001$white_dim\002[$(date +'%T')]"
 	fi
 }
 
+function get_branch
+{
+	echo -e "\001$red\002$(__git_ps1)"
+}
+
+PS1='${debian_chroot:+($debian_chroot)}$ '
+# $(get_time)$(hn_ps1)$(bn_wd)$white
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}$(get_time)$(hn_ps1)$(bn_wd)\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}$(get_time)$(hn_ps1)$(bn_wd)$(get_branch)\[$white\]$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
