@@ -8,7 +8,7 @@ alias "gia"="git add"
 alias "gic"="git commit -m"
 alias "gip"="git push"
 alias "zz2"="cd ~/Etudes/ZZ2"
-alias "a-studio"="~/Bin/android-studio/bin/studio.sh"
+alias "giadog"="git log --all --decorate --oneline --graph"
 
 # If not running interactively, don't do anything
 case $- in
